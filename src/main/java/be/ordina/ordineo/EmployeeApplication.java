@@ -9,9 +9,9 @@ import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
 @EnableEntityLinks
-@EnableFeignClients
-@EnableEurekaClient
-@EnableRetry
+//@EnableFeignClients
+//@EnableEurekaClient
+//@EnableRetry
 //@EnableHypermediaSupport(type = HAL)
 public class EmployeeApplication {
 

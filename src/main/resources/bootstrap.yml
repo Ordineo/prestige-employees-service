@@ -1,12 +1,12 @@
 spring:
   application:
     name: employee
-  cloud:
-    config:
-      uri: http://localhost:42061/
-      fail-fast: true
-      retry:
-        initial-interval: 1000
-        max-attempts: 50
-        multiplier: 1.1
-        max-interval: 10000
+#  cloud:
+#    config:
+#      uri: http://localhost:42061/
+#      fail-fast: true
+#      retry:
+#        initial-interval: 1000
+#        max-attempts: 50
+#        multiplier: 1.1
+#        max-interval: 10000
