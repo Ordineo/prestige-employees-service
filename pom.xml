@@ -138,7 +138,14 @@
 			<version>0.7.0</version>
 		</dependency>
 
-		<!-- Persistence -->
+        <!-- https://mvnrepository.com/artifact/org.kohsuke/github-api -->
+        <dependency>
+            <groupId>org.kohsuke</groupId>
+            <artifactId>github-api</artifactId>
+            <version>1.85</version>
+        </dependency>
+
+        <!-- Persistence -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>

@@ -43,6 +43,11 @@ public class Employee implements Identifiable<UUID> {
     @Column(name = "GENDER", length = 20)
     private String gender;
 
+    public Employee(String username) {
+        this.uuid = UUID.randomUUID();
+        this.username = username;
+    }
+
     @Override
     public UUID getId() {
         return uuid;
