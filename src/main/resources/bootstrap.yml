@@ -1,6 +1,21 @@
 spring:
   application:
     name: employee
+  queries:
+    users-query: select username, password, enabled from employees where username=?
+    roles-query: select e.username, r.title from employees e inner join role_assignments ra on(e.uuid=ra.employee_uuid) inner join roles r on(ra.role_id=r.id) where e.username=?
+
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/prestige
+#    username: root
+#    password:
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create
+#      naming:
+#        strategy: org.hibernate.cfg.ImprovedNamingStrategy
+
 server:
   port: 8081
 
