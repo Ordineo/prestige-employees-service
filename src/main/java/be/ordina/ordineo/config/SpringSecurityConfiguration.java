@@ -34,6 +34,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Qualifier("dataSource")
     @Autowired
     private DataSource dataSource;
 

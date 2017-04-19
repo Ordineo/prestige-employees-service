@@ -34,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void saveEmployee(Employee employee) {
         employee.setPassword(bCryptPasswordEncoder.encode(employee.getPassword()));
         employee.setEnabled(1);
-        Role userRole = roleRepository.findByTitle("ADMIN");
+        Role userRole = roleRepository.findByTitle("admin");
         employee.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         employeeRepository.save(employee);
     }
