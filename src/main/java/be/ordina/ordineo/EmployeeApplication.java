@@ -6,9 +6,11 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.hateoas.config.EnableEntityLinks;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableEntityLinks
+@EnableScheduling
 //@EnableFeignClients
 //@EnableEurekaClient
 //@EnableRetry
