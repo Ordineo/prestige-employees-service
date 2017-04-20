@@ -28,4 +28,10 @@ public class ScheduledTasks {
         gitHubUsers.importUsers();
     }
 
+    @Scheduled(initialDelay = 20000, fixedDelay = 50000)
+    public void updateGitHubUsers() throws IOException {
+        GitHubUsers gitHubUsers = new GitHubUsers(employeeRepository);
+        gitHubUsers.importUsers();
+    }
+
 }

@@ -25,20 +25,24 @@ public class GitHubUsers {
 
     private EmployeeRepository employeeRepository;
 
-    public GitHubUsers(EmployeeRepository employeeRepository) {
+    GitHub gh;
+    GHOrganization organization;
+
+    public GitHubUsers(EmployeeRepository employeeRepository) throws IOException {
         this.employeeRepository = employeeRepository;
+        gh = GitHub.connect();
+        organization = gh.getOrganization("Ordineo");
     }
 
     public void importUsers() throws IOException {
-        GitHub gh = GitHub.connect();
-        GHOrganization organization = gh.getOrganization("Ordineo");
 
         // Get GitHub user information
         organization.listMembers().forEach(member -> {
             String memberName = member.getLogin();
 
             // If the user is not found in database, it creates that user, else the user is skipped
-            if (employeeRepository.findByUsername(memberName) == null) {
+            Employee dbEmployee = employeeRepository.findByUsername(memberName);
+            if (dbEmployee == null) {
                 Employee employee = new Employee(memberName);
                 GHUser ghUser;
                 try {
@@ -59,8 +63,29 @@ public class GitHubUsers {
                 }
                 employeeRepository.save(employee);
                 log.info(memberName + " imported at: {}", dateFormat.format(new Date()));
-            } else
-                log.info(memberName + " already in database.");
+            } else {
+                // If the GH user changed his email since the last time, the database gets updated.
+                try {
+                    String ghUserEmail = gh.getUser(memberName).getEmail();
+                    String dbEmployeeEmail = dbEmployee.getEmail();
+
+                    if (!(dbEmployeeEmail == null && ghUserEmail == null)) {
+                        if (dbEmployeeEmail != null && ghUserEmail != null) {
+                            if (!dbEmployeeEmail.equals(ghUserEmail)) {
+                                dbEmployee.setEmail(ghUserEmail);
+                                employeeRepository.save(dbEmployee);
+                                log.info(memberName + " email updated.");
+                            }
+                        } else if ((dbEmployeeEmail != null && ghUserEmail == null) || (dbEmployeeEmail == null && ghUserEmail != null)) {
+                            dbEmployee.setEmail(ghUserEmail);
+                            employeeRepository.save(dbEmployee);
+                            log.info(memberName + " email updated.");
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 
