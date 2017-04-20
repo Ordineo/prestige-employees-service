@@ -4,7 +4,19 @@ spring:
   queries:
     users-query: select username, password, enabled from employees where username=?
     roles-query: select e.username, r.title from employees e inner join role_assignments ra on(e.uuid=ra.employee_uuid) inner join roles r on(ra.role_id=r.id) where e.username=?
+  cloud:
+    config:
+      uri: http://localhost:42061/
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 50
+        multiplier: 1.1
+        max-interval: 10000
+#server:
+#  port: 8081
 
+##### mysql
 #  datasource:
 #    url: jdbc:mysql://localhost:3306/prestige
 #    username: root
@@ -15,16 +27,3 @@ spring:
 #      ddl-auto: create
 #      naming:
 #        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-
-server:
-  port: 8081
-
-#  cloud:
-#    config:
-#      uri: http://localhost:42061/
-#      fail-fast: true
-#      retry:
-#        initial-interval: 1000
-#        max-attempts: 50
-#        multiplier: 1.1
-#        max-interval: 10000

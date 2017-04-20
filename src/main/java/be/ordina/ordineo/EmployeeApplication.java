@@ -11,10 +11,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableEntityLinks
 @EnableScheduling
-//@EnableFeignClients
-//@EnableEurekaClient
-//@EnableRetry
-//@EnableHypermediaSupport(type = HAL)
+@EnableFeignClients
+@EnableEurekaClient
+@EnableRetry
 public class EmployeeApplication {
 
 	public static void main(String[] args) {
