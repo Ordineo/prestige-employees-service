@@ -47,7 +47,7 @@ public class InitUsersImport implements CommandLineRunner {
         roleRepository.save(adminrole);
         Collection<Role> roles = new ArrayList<>();
         roles.add(adminrole);
-        Employee admin = new Employee("admin", bCryptPasswordEncoder.encode("admin"), "sammi.fux@ordina.be",
+        Employee admin = new Employee("admin", bCryptPasswordEncoder.encode("default"), "sammi.fux@ordina.be",
                 "Sammi", "Fux", "https://media.licdn.com/media/AAEAAQAAAAAAAAVgAAAAJDRjNGE2ZWVkLTM3NzEtNDNhZC1hMDdiLTI3NmU4MGU5Mzk0Zg.jpg",
                 "0469696969", "JWORKS", "M", roles);
 
