@@ -63,8 +63,10 @@ public class Employee implements Identifiable<UUID> {
     })
     private Collection<Role> roles;
 
-    @Column(name = "ENABLED")
+    @Column(name = "ENABLED", columnDefinition = "Integer default '0' NOT NULL")
     private int enabled;
+    @Column(name = "DELETED", columnDefinition = "Integer default '0' NOT NULL")
+    private int deleted;
 
     public Employee(String username) {
         this.uuid = UUID.randomUUID();
