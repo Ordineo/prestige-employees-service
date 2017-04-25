@@ -22,15 +22,16 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.addAllowedMethod(HttpMethod.POST);
+        config.addAllowedMethod(HttpMethod.GET);
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        return source;
     }
 
 }

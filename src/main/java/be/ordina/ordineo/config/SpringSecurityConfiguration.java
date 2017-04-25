@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
 
@@ -34,6 +35,8 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private UrlBasedCorsConfigurationSource corsConfigurationSource;
 
     @Qualifier("dataSource")
     @Autowired
@@ -48,6 +51,8 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().disable()
+                .cors().configurationSource(corsConfigurationSource)
+            .and()
                 .csrf().disable().authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
