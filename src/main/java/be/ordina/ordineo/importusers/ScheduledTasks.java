@@ -4,6 +4,7 @@ import be.ordina.ordineo.repo.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +23,14 @@ public class ScheduledTasks {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Value("${github.organization}")
+    private String organization;
+    @Value("${github.token}")
+    private String token;
+
     @Scheduled(cron = "0 0 0 * * *")
     public void importGitHubUsers() throws IOException {
-        GitHubUsers gitHubUsers = new GitHubUsers(employeeRepository);
+        GitHubUsers gitHubUsers = new GitHubUsers(employeeRepository, organization, token);
         gitHubUsers.importUsers();
     }
 

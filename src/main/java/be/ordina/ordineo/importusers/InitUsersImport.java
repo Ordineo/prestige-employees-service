@@ -7,6 +7,7 @@ import be.ordina.ordineo.repo.RoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -33,11 +34,16 @@ public class InitUsersImport implements CommandLineRunner {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Value("${github.organization}")
+    private String organization;
+    @Value("${github.token}")
+    private String token;
+
     @Override
     public void run(String... args) throws Exception {
         log.info("Initial users import started...");
         createAdmin();
-        GitHubUsers gitHubUsers = new GitHubUsers(employeeRepository);
+        GitHubUsers gitHubUsers = new GitHubUsers(employeeRepository, organization, token);
         gitHubUsers.importUsers();
     }
 

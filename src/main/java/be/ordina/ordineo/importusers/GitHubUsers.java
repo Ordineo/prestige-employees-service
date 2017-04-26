@@ -26,16 +26,22 @@ public class GitHubUsers {
 
     private EmployeeRepository employeeRepository;
 
+    private String ghOrganizationName;
+    private String ghToken;
+
     private GitHub gh;
     private GHOrganization organization;
 
-    public GitHubUsers(EmployeeRepository employeeRepository) throws IOException {
+    public GitHubUsers(EmployeeRepository employeeRepository, String ghOrganizationName, String ghToken) throws IOException {
         this.employeeRepository = employeeRepository;
-        gh = GitHub.connect();
-        organization = gh.getOrganization("Ordineo");
+        this.ghOrganizationName = ghOrganizationName;
+        this.ghToken = ghToken;
     }
 
     public void importUsers() throws IOException {
+        gh = GitHub.connectUsingOAuth(ghToken);
+        organization = gh.getOrganization(ghOrganizationName);
+
         organization.listMembers().asList().stream()
                 .filter(member -> employeeRepository.findByUsername(member.getLogin()) == null)
                 .forEach(this::store);
@@ -45,19 +51,10 @@ public class GitHubUsers {
                 .forEach(this::update);
     }
 
-    private String[] parseNames(String[] splittedName) {
-        String firstname = "";
-        String lastname = "";
-        for (String namePart : splittedName) {
-            if (namePart == splittedName[0]) firstname = namePart;
-            else lastname += namePart + " ";
-        }
-        return new String[] {firstname, lastname.substring(0, lastname.length()-1)};
-    }
-
     private void store(GHUser member) {
         Employee employee = new Employee(member.getLogin());
         GHUser ghUser;
+        LOG.info("Importing " + member.getLogin());
         try {
             ghUser = gh.getUser(member.getLogin());
             employee.setEmail(ghUser.getEmail());
@@ -94,6 +91,20 @@ public class GitHubUsers {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String[] parseNames(String[] splittedName) {
+        String firstname = "";
+        String lastname = "";
+        for (String namePart : splittedName) {
+            if (namePart == splittedName[0]) firstname = namePart;
+            else lastname += namePart + " ";
+        }
+
+        // Remove last space from lastname if there is one
+        if (!lastname.equals(""))
+            lastname = lastname.substring(0, lastname.length()-1);
+        return new String[] {firstname, lastname};
     }
 
 }
