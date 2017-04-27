@@ -1,6 +1,6 @@
 github:
   organization: ordina-jworks
-  token: acb6cd74da943a83727b7924648ffb1631a1f052
+  token: 2227b6bf5cd7fbfbbef6d3c76255700b03c42b55
 spring:
   application:
     name: employee

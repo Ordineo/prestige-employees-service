@@ -4,6 +4,7 @@ import be.ordina.ordineo.model.Role;
 import be.ordina.ordineo.repo.EmployeeRepository;
 import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.repo.RoleRepository;
+import be.ordina.ordineo.service.GitHubService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,8 @@ public class InitUsersImport implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("Initial users import started...");
         createAdmin();
-        GitHubUsers gitHubUsers = new GitHubUsers(employeeRepository, organization, token);
-        gitHubUsers.importUsers();
+        GitHubService gitHubService = new GitHubService(employeeRepository, organization, token);
+        gitHubService.importUsers();
     }
 
     private void createAdmin() {

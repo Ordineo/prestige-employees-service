@@ -28,6 +28,9 @@ public class Employee implements Identifiable<UUID> {
     @Column(name = "UUID")
     private UUID uuid;
 
+    @Column(name = "GITHUB_ID")
+    private int githubId;
+
     @Column(name = "USERNAME", length = 40)
     private String username;
 

@@ -12,4 +12,5 @@ import java.util.UUID;
  */
 public interface EmployeeRepository extends CrudRepository<Employee, UUID> {
     Employee findByUsername(@Param("username") String username);
+    Employee findByGithubId(@Param("githubid") int githubId);
 }

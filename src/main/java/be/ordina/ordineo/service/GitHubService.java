@@ -1,5 +1,6 @@
-package be.ordina.ordineo.importusers;
+package be.ordina.ordineo.service;
 
+import be.ordina.ordineo.importusers.ScheduledTasks;
 import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.repo.EmployeeRepository;
 import lombok.AccessLevel;
@@ -19,7 +20,7 @@ import java.util.Date;
  * Created by SaFu on 19/04/2017.
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GitHubUsers {
+public class GitHubService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledTasks.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -32,7 +33,7 @@ public class GitHubUsers {
     private GitHub gh;
     private GHOrganization organization;
 
-    public GitHubUsers(EmployeeRepository employeeRepository, String ghOrganizationName, String ghToken) throws IOException {
+    public GitHubService(EmployeeRepository employeeRepository, String ghOrganizationName, String ghToken) throws IOException {
         this.employeeRepository = employeeRepository;
         this.ghOrganizationName = ghOrganizationName;
         this.ghToken = ghToken;
@@ -43,31 +44,30 @@ public class GitHubUsers {
         organization = gh.getOrganization(ghOrganizationName);
 
         organization.listMembers().asList().stream()
-                .filter(member -> employeeRepository.findByUsername(member.getLogin()) == null)
+                .filter(member -> employeeRepository.findByGithubId(member.getId()) == null)
                 .forEach(this::store);
 
         organization.listMembers().asList().stream()
-                .filter(member -> employeeRepository.findByUsername(member.getLogin()) != null)
+                .filter(member -> employeeRepository.findByGithubId(member.getId()) != null)
                 .forEach(this::update);
     }
 
     private void store(GHUser member) {
         Employee employee = new Employee(member.getLogin());
-        GHUser ghUser;
         LOG.info("Importing " + member.getLogin());
         try {
-            ghUser = gh.getUser(member.getLogin());
-            employee.setEmail(ghUser.getEmail());
-            employee.setAvatar(ghUser.getAvatarUrl());
+            employee.setGithubId(member.getId());
+            employee.setEmail(member.getEmail());
+            employee.setAvatar(member.getAvatarUrl());
 
             // Split first name and last name and put them in the according fields.
-            if (ghUser.getName() != null) {
-                String[] splittedName = parseNames(ghUser.getName().split("\\s+"));
+            if (member.getName() != null) {
+                String[] splittedName = parseNames(member.getName().split("\\s+"));
                 employee.setFirstName(splittedName[0]);
                 employee.setLastName(splittedName[1]);
             }
 
-            employee.setUnit(ghUser.getCompany());
+            employee.setUnit(member.getCompany());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,7 +79,17 @@ public class GitHubUsers {
         Employee dbEmployee = employeeRepository.findByUsername(member.getLogin());
         // If the GH user changed his email since the last time, the database gets updated.
         try {
-            String ghUserEmail = gh.getUser(member.getLogin()).getEmail();
+            String ghUserHandle = member.getLogin();
+            String dbEmployeeHandle = dbEmployee.getUsername();
+
+            // Compare string values with possible null value, if not the same: update
+            if (!StringUtils.equals(ghUserHandle, dbEmployeeHandle)) {
+                dbEmployee.setUsername(ghUserHandle);
+                employeeRepository.save(dbEmployee);
+                LOG.info(member.getLogin() + " handle updated.");
+            }
+
+            String ghUserEmail = member.getEmail();
             String dbEmployeeEmail = dbEmployee.getEmail();
 
             // Compare string values with possible null value, if not the same: update

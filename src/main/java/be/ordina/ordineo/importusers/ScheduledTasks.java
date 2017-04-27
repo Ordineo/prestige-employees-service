@@ -1,6 +1,7 @@
 package be.ordina.ordineo.importusers;
 
 import be.ordina.ordineo.repo.EmployeeRepository;
+import be.ordina.ordineo.service.GitHubService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void importGitHubUsers() throws IOException {
-        GitHubUsers gitHubUsers = new GitHubUsers(employeeRepository, organization, token);
-        gitHubUsers.importUsers();
+        GitHubService gitHubService = new GitHubService(employeeRepository, organization, token);
+        gitHubService.importUsers();
     }
 
 }
