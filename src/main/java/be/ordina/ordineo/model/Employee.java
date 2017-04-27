@@ -3,97 +3,92 @@ package be.ordina.ordineo.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.annotations.*;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.UUID;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 
 /**
  * Created by shbe on 13/04/2017.
  */
 
 
-@NoArgsConstructor//should i set the access level attribute?????(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "EMPLOYEES")
+@Table(name = "EMPLOYEES", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "USERNAME"),
+        @UniqueConstraint(columnNames = "EMAIL")})
 public class Employee implements Identifiable<UUID> {
 
     @Id
     @Column(name = "UUID")
+    @Type(type = "uuid-char")
     private UUID uuid;
 
     @Column(name = "GITHUB_ID")
     private int githubId;
 
-    @Column(name = "USERNAME", length = 40)
+    @NotNull
+    @Column(name = "USERNAME", length = 40, unique = true)
     private String username;
-
-    @Column(name = "PASSWORD", length = 64)
-//    @Length(min = 6, message = "*Your password must have at least 6 characters")
-//    @NotEmpty(message = "*Please provide your password")
-//    @Transient
+    @NotNull
+    @Column(name = "PASSWORD", length = 40)
     private String password;
-
-    @Column(name = "EMAIL", length = 50)
-//    @Email(message = "*Please provide a valid Email")
-//    @NotEmpty(message = "*Please provide an email")
+    @NotNull
+    @Column(name = "EMAIL", length = 50, unique = true)
     private String email;
-
+    @NotNull
     @Column(name = "FIRSTNAME", length = 60)
     private String firstName;
+    @NotNull
     @Column(name = "LASTNAME", length = 60)
     private String lastName;
     @Column(name = "AVATAR", length = 300)
     private String avatar;
     @Column(name = "PHONE", length = 15)
     private String phone;
-    @Column(name = "UNIT", length = 15)
-    private String unit;
-    @Column(name = "GENDER", length = 20)
-    private String gender;
 
-    @ManyToMany
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Unit unit;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @ManyToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.ALL)
     @JoinTable(name = "ROLE_ASSIGNMENTS", joinColumns = {
-            @JoinColumn(name = "EMPLOYEE_UUID")
+            @JoinColumn(name = "EMPLOYEES_ID", referencedColumnName = "UUID")
     }, inverseJoinColumns = {
-            @JoinColumn(name = "ROLE_ID")
+            @JoinColumn(name = "ROLES_ID", referencedColumnName = "ID", nullable = false, updatable = false)
     })
-    private Collection<Role> roles;
-
-    @Column(name = "ENABLED", columnDefinition = "Integer default '0' NOT NULL")
-    private int enabled;
-    @Column(name = "DELETED", columnDefinition = "Integer default '0' NOT NULL")
-    private int deleted;
-
-    public Employee(String username) {
-        this.uuid = UUID.randomUUID();
-        this.username = username;
-        this.enabled = 0;
-    }
-
-    public Employee(String username, String password, String email, String firstName, String lastName, String avatar, String phone, String unit, String gender, Collection<Role> roles) {
-        this.uuid = UUID.randomUUID();
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.avatar = avatar;
-        this.phone = phone;
-        this.unit = unit;
-        this.gender = gender;
-        this.roles = roles;
-        this.enabled = 1;
-    }
+    private List<Role> roles = new ArrayList<>();
 
     @Override
     public UUID getId() {
         return uuid;
     }
+
+    /*
+     The method annotated with @PrePersist in listener bean
+     class is called before persisting data by entity manager persist() method.
+     */
+    @PrePersist
+    public void generateUuid() {
+
+        System.out.println("inside employee");
+        if (getUuid() == null) {
+            System.out.println("inside employee object null");
+            setUuid(UUID.randomUUID());
+        }
+    }
 }
+
+
+

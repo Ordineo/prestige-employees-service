@@ -2,3 +2,4 @@ spring:
   cloud:
     config:
       uri: http://config:42061/
+
