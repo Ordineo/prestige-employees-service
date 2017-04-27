@@ -33,13 +33,14 @@ public class GitHubService {
     private GitHub gh;
     private GHOrganization organization;
 
-    public GitHubService(EmployeeRepository employeeRepository, String ghOrganizationName, String ghToken) throws IOException {
+    public GitHubService(EmployeeRepository employeeRepository) throws IOException {
         this.employeeRepository = employeeRepository;
-        this.ghOrganizationName = ghOrganizationName;
-        this.ghToken = ghToken;
+        this.ghOrganizationName = System.getenv("ghorg");
+        this.ghToken = System.getenv("ghtoken");
     }
 
     public void importUsers() throws IOException {
+        // Set-up ghtoken and ghorg in system environment variables
         gh = GitHub.connectUsingOAuth(ghToken);
         organization = gh.getOrganization(ghOrganizationName);
 

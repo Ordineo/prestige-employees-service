@@ -24,14 +24,9 @@ public class ScheduledTasks {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @Value("${github.organization}")
-    private String organization;
-    @Value("${github.token}")
-    private String token;
-
     @Scheduled(cron = "0 0 0 * * *")
     public void importGitHubUsers() throws IOException {
-        GitHubService gitHubService = new GitHubService(employeeRepository, organization, token);
+        GitHubService gitHubService = new GitHubService(employeeRepository);
         gitHubService.importUsers();
     }
 

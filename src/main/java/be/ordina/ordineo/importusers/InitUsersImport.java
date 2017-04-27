@@ -35,16 +35,11 @@ public class InitUsersImport implements CommandLineRunner {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Value("${github.organization}")
-    private String organization;
-    @Value("${github.token}")
-    private String token;
-
     @Override
     public void run(String... args) throws Exception {
         log.info("Initial users import started...");
         createAdmin();
-        GitHubService gitHubService = new GitHubService(employeeRepository, organization, token);
+        GitHubService gitHubService = new GitHubService(employeeRepository);
         gitHubService.importUsers();
     }
 
