@@ -10,7 +10,6 @@ spring:
         max-attempts: 50
         multiplier: 1.1
         max-interval: 10000
-
 ##### mysql
 #  datasource:
 #    url: jdbc:mysql://localhost:3306/prestige
