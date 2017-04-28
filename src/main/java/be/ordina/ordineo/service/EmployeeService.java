@@ -38,8 +38,8 @@ public class EmployeeService {
 
     public Page<Employee> findAll(Optional<String> filter , Pageable pageable){
         if(filter.isPresent()){
-            EmployeeSpecificationsBuilder employeeSpecificationsBuilder = new EmployeeSpecificationsBuilder(new ArrayList<>());
-            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+            EmployeeSpecificationsBuilder employeeSpecificationsBuilder = new EmployeeSpecificationsBuilder();
+            Pattern pattern = Pattern.compile("(\\w+?)(:)(\\w+?),");
             Matcher matcher = pattern.matcher(filter + ",");
             while (matcher.find()) {
                 employeeSpecificationsBuilder.with(matcher.group(1), matcher.group(2), matcher.group(3));

@@ -11,7 +11,7 @@ import java.util.List;
 public class EmployeeSpecificationsBuilder {
     private final List<SearchCriteria> params;
 
-    public EmployeeSpecificationsBuilder(List<SearchCriteria> params) {
+    public EmployeeSpecificationsBuilder() {
         this.params = new ArrayList<SearchCriteria>();
     }
 
