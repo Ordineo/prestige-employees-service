@@ -31,4 +31,8 @@ public class Role implements Identifiable<Long> {
     @ManyToMany(mappedBy = "roles")
     private List<Employee> employees = new ArrayList<>();
 
+    public Role(String title) {
+        this.title = title;
+    }
+
 }

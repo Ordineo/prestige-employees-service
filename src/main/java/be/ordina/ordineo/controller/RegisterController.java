@@ -2,14 +2,15 @@ package be.ordina.ordineo.controller;
 
 import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.model.Role;
-import be.ordina.ordineo.repo.EmployeeRepository;
-import be.ordina.ordineo.repo.RoleRepository;
+import be.ordina.ordineo.repository.EmployeeRepository;
+import be.ordina.ordineo.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by SaFu on 19/04/2017.
@@ -32,7 +33,7 @@ public class RegisterController {
         employee.setPassword(bCryptPasswordEncoder.encode(password));
         employee.setEnabled(1);
         Role userRole = roleRepository.findByTitle("admin");
-        employee.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+        employee.setRoles((List<Role>) new HashSet<Role>(Arrays.asList(userRole)));
         employeeRepository.save(employee);
     }
 

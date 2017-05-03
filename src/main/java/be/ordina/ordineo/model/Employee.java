@@ -37,16 +37,12 @@ public class Employee implements Identifiable<UUID> {
     @NotNull
     @Column(name = "USERNAME", length = 40, unique = true)
     private String username;
-    @NotNull
-    @Column(name = "PASSWORD", length = 40)
+    @Column(name = "PASSWORD", length = 60)
     private String password;
-    @NotNull
     @Column(name = "EMAIL", length = 50, unique = true)
     private String email;
-    @NotNull
     @Column(name = "FIRSTNAME", length = 60)
     private String firstName;
-    @NotNull
     @Column(name = "LASTNAME", length = 60)
     private String lastName;
     @Column(name = "AVATAR", length = 300)
@@ -54,11 +50,9 @@ public class Employee implements Identifiable<UUID> {
     @Column(name = "PHONE", length = 15)
     private String phone;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Unit unit;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -70,9 +64,35 @@ public class Employee implements Identifiable<UUID> {
     })
     private List<Role> roles = new ArrayList<>();
 
+    @Column(name = "ENABLED", columnDefinition = "Integer default '0' NOT NULL")
+    private int enabled;
+    @Column(name = "DELETED", columnDefinition = "Integer default '0' NOT NULL")
+    private int deleted;
+
     @Override
     public UUID getId() {
         return uuid;
+    }
+
+    public Employee(String username) {
+        this.uuid = UUID.randomUUID();
+        this.username = username;
+        this.enabled = 0;
+    }
+
+    public Employee(String username, String password, String email, String firstName, String lastName, String avatar, String phone, String unit, String gender, Collection<Role> roles) {
+        this.uuid = UUID.randomUUID();
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.avatar = avatar;
+        this.phone = phone;
+//        this.unit = unit;
+//        this.gender = gender;
+//        this.roles = roles;
+        this.enabled = 1;
     }
 
     /*

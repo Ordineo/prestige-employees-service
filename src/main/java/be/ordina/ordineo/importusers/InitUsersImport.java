@@ -1,14 +1,13 @@
 package be.ordina.ordineo.importusers;
 
 import be.ordina.ordineo.model.Role;
-import be.ordina.ordineo.repo.EmployeeRepository;
+import be.ordina.ordineo.repository.EmployeeRepository;
 import be.ordina.ordineo.model.Employee;
-import be.ordina.ordineo.repo.RoleRepository;
+import be.ordina.ordineo.repository.RoleRepository;
 import be.ordina.ordineo.service.GitHubService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;

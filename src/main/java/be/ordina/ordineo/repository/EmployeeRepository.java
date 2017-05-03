@@ -22,6 +22,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> ,JpaSp
   //@RestResource(path="employee",rel="employee")
   Employee findByUuid(@Param("uuid") UUID uuid);
   Employee findByUsername(@Param("username") String username);
+  Employee findByGithubId(@Param("githubid") int githubId);
   //Page<Employee> findAll(@Param("projection") String projection, @Param("pageRequest") Pageable pageRequest);
   //Page<Employee> findAll(Specification<Employee> specification,  Pageable pageRequest);
 

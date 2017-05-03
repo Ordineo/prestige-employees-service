@@ -2,7 +2,8 @@ package be.ordina.ordineo.service;
 
 import be.ordina.ordineo.importusers.ScheduledTasks;
 import be.ordina.ordineo.model.Employee;
-import be.ordina.ordineo.repo.EmployeeRepository;
+import be.ordina.ordineo.model.Unit;
+import be.ordina.ordineo.repository.EmployeeRepository;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
@@ -68,7 +69,7 @@ public class GitHubService {
                 employee.setLastName(splittedName[1]);
             }
 
-            employee.setUnit(member.getCompany());
+            employee.setUnit(Unit.JWORKS);
         } catch (IOException e) {
             e.printStackTrace();
         }
