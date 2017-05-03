@@ -58,7 +58,7 @@ public class Employee implements Identifiable<UUID> {
 
     @ManyToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.ALL)
     @JoinTable(name = "ROLE_ASSIGNMENTS", joinColumns = {
-            @JoinColumn(name = "EMPLOYEE_ID", referencedColumnName = "UUID")
+            @JoinColumn(name = "EMPLOYEE_UUID", referencedColumnName = "UUID")
     }, inverseJoinColumns = {
             @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID", nullable = false, updatable = false)
     })
