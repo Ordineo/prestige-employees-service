@@ -58,9 +58,9 @@ public class Employee implements Identifiable<UUID> {
 
     @ManyToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.ALL)
     @JoinTable(name = "ROLE_ASSIGNMENTS", joinColumns = {
-            @JoinColumn(name = "EMPLOYEES_ID", referencedColumnName = "UUID")
+            @JoinColumn(name = "EMPLOYEE_ID", referencedColumnName = "UUID")
     }, inverseJoinColumns = {
-            @JoinColumn(name = "ROLES_ID", referencedColumnName = "ID", nullable = false, updatable = false)
+            @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID", nullable = false, updatable = false)
     })
     private List<Role> roles = new ArrayList<>();
 
@@ -80,7 +80,7 @@ public class Employee implements Identifiable<UUID> {
         this.enabled = 0;
     }
 
-    public Employee(String username, String password, String email, String firstName, String lastName, String avatar, String phone, String unit, String gender, Collection<Role> roles) {
+    public Employee(String username, String password, String email, String firstName, String lastName, String avatar, String phone, String unit, String gender, List<Role> roles) {
         this.uuid = UUID.randomUUID();
         this.username = username;
         this.password = password;
@@ -91,7 +91,7 @@ public class Employee implements Identifiable<UUID> {
         this.phone = phone;
 //        this.unit = unit;
 //        this.gender = gender;
-//        this.roles = roles;
+        this.roles = roles;
         this.enabled = 1;
     }
 

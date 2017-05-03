@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by SaFu on 14/04/2017.
@@ -46,7 +46,7 @@ public class InitUsersImport implements CommandLineRunner {
         // Admin config
         Role adminrole = new Role("admin");
         roleRepository.save(adminrole);
-        Collection<Role> roles = new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
         roles.add(adminrole);
         Employee admin = new Employee("admin", bCryptPasswordEncoder.encode("default"), "sammi.fux@ordina.be",
                 "Sammi", "Fux", "https://media.licdn.com/media/AAEAAQAAAAAAAAVgAAAAJDRjNGE2ZWVkLTM3NzEtNDNhZC1hMDdiLTI3NmU4MGU5Mzk0Zg.jpg",
