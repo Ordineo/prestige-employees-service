@@ -173,6 +173,12 @@
 			<version>6.0.6</version>
 		</dependency>
 
+		<!-- postgres -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.4-1206-jdbc42</version>
+		</dependency>
 
 		<!-- Encoding/Decoding -->
 		<dependency>
@@ -335,6 +341,7 @@
 			<plugin>
 				<groupId>org.eluder.coveralls</groupId>
 				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>4.3.0</version>
 				<configuration>
 					<repoToken>NuFrKEOkMCkqDCcemy4k3sUcYVJHnYfYf</repoToken>
 				</configuration>
@@ -342,6 +349,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.9</version>
 				<executions>
 					<execution>
 						<id>prepare-agent</id>
