@@ -108,6 +108,25 @@ public class Employee implements Identifiable<UUID> {
             setUuid(UUID.randomUUID());
         }
     }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "uuid=" + uuid +
+                ", githubId=" + githubId +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", phone='" + phone + '\'' +
+                ", unit=" + unit +
+                ", gender=" + gender +
+                ", roles=" + roles +
+                ", enabled=" + enabled +
+                ", deleted=" + deleted +
+                '}';
+    }
 }
 
 
