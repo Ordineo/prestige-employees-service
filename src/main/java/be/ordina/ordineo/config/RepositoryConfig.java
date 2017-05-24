@@ -16,8 +16,8 @@ import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapt
 public class RepositoryConfig extends RepositoryRestConfigurerAdapter{
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-       //config.withEntityLookup().forValueRepository(EmployeeRepository.class, Employee::getUsername, EmployeeRepository::findByUsername);
-      // config.withEntityLookup().forValueRepository(RoleRepository.class, Role::getTitle, RoleRepository::findByTitle);
+      // config.withEntityLookup().forValueRepository(EmployeeRepository.class, Employee::getUsername, EmployeeRepository::findByUsername);
+//       config.withEntityLookup().forValueRepository(RoleRepository.class, Role::getTitle, RoleRepository::findByTitle);
 
     }
 }

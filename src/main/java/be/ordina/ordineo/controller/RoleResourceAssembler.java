@@ -22,22 +22,27 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @Component
 public class RoleResourceAssembler implements ResourceAssembler<Role, Resource<Role>> {
-    private EmployeeResourceAssembler employeeResourceAssembler;
+    //private EmployeeResourceAssembler employeeResourceAssembler;
+    //private EmployeeViewResourceAssembler employeeViewResourceAssembler;
     private EntityLinks entityLinks;
 
-    @Autowired
-    public RoleResourceAssembler(EmployeeResourceAssembler employeeResourceAssembler, EntityLinks entityLinks) {
-        this.employeeResourceAssembler = employeeResourceAssembler;
+  /*  @Autowired
+    public RoleResourceAssembler(EmployeeViewResourceAssembler employeeViewResourceAssembler, EntityLinks entityLinks) {
+       // this.employeeResourceAssembler = employeeResourceAssembler;
+        this.employeeViewResourceAssembler = employeeViewResourceAssembler;
+        this.entityLinks = entityLinks;
+    }*/
+
+    public RoleResourceAssembler(EntityLinks entityLinks) {
         this.entityLinks = entityLinks;
     }
 
-
     /*  public RoleResourceAssembler() {
 
-     }*/
+         }*/
     public Link linkToSingleResource(Role role) {
         //  return linkTo(RoleController.class).slash(role).withSelfRel();
-        return entityLinks.linkToSingleResource(Role.class, role.getTitle());//title or id????
+        return entityLinks.linkToSingleResource(Role.class, role.getTitle()).withSelfRel();
     }
 
     @Override
@@ -46,8 +51,13 @@ public class RoleResourceAssembler implements ResourceAssembler<Role, Resource<R
         roleResource.add(linkToSingleResource(role));
         // roleResource.add((linkTo(RoleController.class).slash(role)).withSelfRel());
         //  Link employeesLink = linkTo(methodOn(EmployeeController.class).findByRole(role.getTitle())).withRel("employees");
-        for (Employee employee : role.getEmployees()) {
-            roleResource.add(employeeResourceAssembler.linkToSingleResource(employee).withRel("employees"));
+        Link employeesLink = null;
+       for (Employee employee : role.getEmployees()) {
+
+            //roleResource.add(employeeResourceAssembler.linkToSingleResource(employee).withRel("employees"));
+           // roleResource.add(employeeViewResourceAssembler.linkToSingleResource(employee).withRel("employees"));
+           employeesLink = linkTo(methodOn(EmployeeController.class).findByUsername(employee.getUsername())).withRel("employees");
+           roleResource.add(employeesLink);
         }
 
 

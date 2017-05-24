@@ -27,34 +27,32 @@ import javax.validation.Valid;
 public class RoleController {
     private final RoleService roleService;
     private final RoleResourceAssembler roleResourceAssembler;
+
     @Autowired
     public RoleController(RoleService roleService, RoleResourceAssembler roleResourceAssembler) {
         this.roleService = roleService;
         this.roleResourceAssembler = roleResourceAssembler;
     }
 
-    @RequestMapping(value = "",method = RequestMethod.GET,produces = {"application/json", "application/hal+json"})
-    public HttpEntity<PagedResources<Resource<Role>>> findAll(PagedResourcesAssembler<Role> assembler){
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = {"application/json", "application/hal+json"})
+    public HttpEntity<PagedResources<Resource<Role>>> findAll(PagedResourcesAssembler<Role> assembler) {
         Page<Role> roles = roleService.findAll();
-        PagedResources<Resource<Role>> pagedRoleeResource = assembler.toResource(roles,roleResourceAssembler);
+        PagedResources<Resource<Role>> pagedRoleeResource = assembler.toResource(roles, roleResourceAssembler);
 
-      return new ResponseEntity<PagedResources<Resource<Role>>>(pagedRoleeResource,HttpStatus.OK);
+        return new ResponseEntity<PagedResources<Resource<Role>>>(pagedRoleeResource, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/" , method = RequestMethod.POST ,consumes = {"application/json","application/hal+json"},
-            produces = {"application/json","application/hal+json"})
-    public ResponseEntity<Void> save(@RequestBody @Valid Role role,UriComponentsBuilder ucBuilder ) {
-        if(!role.getEmployees().isEmpty()){
-            //saveWithEmployee(); ???? i am gonna ask if we want to allow this???
-        }else{
-            roleService.save(role);
-        }
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = {"application/json", "application/hal+json"},
+            produces = {"application/json", "application/hal+json"})
+    public ResponseEntity<Void> save(@RequestBody @Valid Role role, UriComponentsBuilder ucBuilder) {
+        roleService.save(role);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ucBuilder.path("/roles/{id}").buildAndExpand((role.getId())).toUri());
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
-    @RequestMapping(value = "/{title}" , method = RequestMethod.DELETE , produces = {"application/hal+json", "application/json"})
-    public ResponseEntity<Void> delete(@PathVariable("title") String title){
+
+    @RequestMapping(value = "/{title}", method = RequestMethod.DELETE, produces = {"application/hal+json", "application/json"})
+    public ResponseEntity<Void> delete(@PathVariable("title") String title) {
         roleService.delete(title);
         return ResponseEntity.noContent().build();
     }

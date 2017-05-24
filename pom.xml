@@ -265,7 +265,6 @@
 		<dependency>
 			<groupId>org.springframework.restdocs</groupId>
 			<artifactId>spring-restdocs-mockmvc</artifactId>
-			<version>1.0.1.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -403,7 +402,11 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/classes/static/generated-docs</outputDirectory>
+							<!--
+							I have put this in comment it's not correct
+							i think it's just a copy from tool 360  you should never use a literal value like target/classes
+							<outputDirectory>${project.build.directory}/classes/static/generated-docs</outputDirectory>-->
+							<outputDirectory>${project.build.outputDirectory}/static/docs</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${project.build.directory}/generated-docs</directory>

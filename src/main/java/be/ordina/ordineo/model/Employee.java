@@ -4,13 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
+import org.hibernate.validator.constraints.Email;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.*;
+
+import static be.ordina.ordineo.model.ConstraintMessage.*;
 
 /**
  * Created by shbe on 13/04/2017.
@@ -34,12 +38,14 @@ public class Employee implements Identifiable<UUID> {
     @Column(name = "GITHUB_ID")
     private int githubId;
 
-    @NotNull
-    @Column(name = "USERNAME", length = 40, unique = true)
+    @NotNull(message = NOT_NULL)
+    @Column(name = "USERNAME",  unique = true)
+    @Size(min = 2   ,max = 30 , message = USERNAME_LENGTH)
     private String username;
     @Column(name = "PASSWORD", length = 60)
     private String password;
     @Column(name = "EMAIL", length = 50, unique = true)
+    @Email
     private String email;
     @Column(name = "FIRSTNAME", length = 60)
     private String firstName;
@@ -56,7 +62,7 @@ public class Employee implements Identifiable<UUID> {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToMany(fetch = FetchType.LAZY)//, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ROLE_ASSIGNMENTS", joinColumns = {
             @JoinColumn(name = "EMPLOYEE_UUID", referencedColumnName = "UUID")
     }, inverseJoinColumns = {
@@ -102,9 +108,7 @@ public class Employee implements Identifiable<UUID> {
     @PrePersist
     public void generateUuid() {
 
-        System.out.println("inside employee");
         if (getUuid() == null) {
-            System.out.println("inside employee object null");
             setUuid(UUID.randomUUID());
         }
     }

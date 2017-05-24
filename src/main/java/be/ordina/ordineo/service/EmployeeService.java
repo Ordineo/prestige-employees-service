@@ -10,62 +10,63 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by shbe on 13/04/2017.
+ * Created by shbe on 09/05/2017.
  */
 @Service
-public class EmployeeService {
+public class EmployeeService {//implements BaseService<Employee> {
+
+
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
     private RoleService roleService;
 
-    /*@Autowired
+   /* @Autowired
     public EmployeeService(EmployeeRepository employeeRepository, RoleService roleService) {
         this.employeeRepository = employeeRepository;
         this.roleService = roleService;
     }*/
 
-    public Page<Employee> findAll(Optional<String> filter , Pageable pageable){
-        if(filter.isPresent()){
-            EmployeeSpecificationsBuilder employeeSpecificationsBuilder = new EmployeeSpecificationsBuilder();
-            Pattern pattern = Pattern.compile("(\\w+?)(:)(\\w+?),");
-            Matcher matcher = pattern.matcher(filter + ",");
-            while (matcher.find()) {
-                employeeSpecificationsBuilder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-            }
-            Specification<Employee> spec = employeeSpecificationsBuilder.build();
-            return employeeRepository.findAll(spec,pageable);
+
+    public Page<Employee> findAll(Optional<String> filter, Pageable pageable) {
+        if (filter.isPresent()) {
+            return applyFilter(filter, pageable);
         }
 
         return employeeRepository.findAll(pageable);
     }
 
-    public Employee findByUUId(UUID uuid){
-        Employee employee = employeeRepository.findByUuid(uuid);
-        if( employee == null){
-            throw new EntityNotFoundException("Employee does not exist!");
+    private Page<Employee> applyFilter(Optional<String> filter, Pageable pageable) {
+        EmployeeSpecificationsBuilder employeeSpecificationsBuilder = new EmployeeSpecificationsBuilder();
+        StringBuilder concatenateFilterWithCommaSeparator = new StringBuilder();
+        if (filter.isPresent()) {
+            concatenateFilterWithCommaSeparator.append(filter.get().concat(","));
         }
-         return employee;
+        Pattern pattern = Pattern.compile("(\\w+?)(:)(\\w+?),");
+        Matcher matcher = pattern.matcher(concatenateFilterWithCommaSeparator);
+        while (matcher.find()) {
+            employeeSpecificationsBuilder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+        }
+        Specification<Employee> spec = employeeSpecificationsBuilder.build();
+        return employeeRepository.findAll(spec, pageable);
     }
 
     @Transactional
-    public void delete(String username){
-        Employee employee = findByUsername(username);
-       /* if(employee == null) {
-            throw new EntityNotFoundException("Employee does not exist!");
-        }*/
-        if(!employee.getRoles().isEmpty()){
+    public void delete(String username) throws EntityNotFoundException{
+        Employee employee = employeeRepository.findByUsername(username);
+        if(employee == null){
+            throw new EntityNotFoundException("Username does not exist!");
+        }
+        if (!employee.getRoles().isEmpty()) {
             unlinkRole(employee);
         }
         employeeRepository.delete(employee.getUuid());
@@ -74,11 +75,11 @@ public class EmployeeService {
     @Transactional
     private void unlinkRole(Employee employee) {
         List<Role> roles = employee.getRoles();
-        for(Role role :roles){
+        for (Role role : roles) {
 
-                    if(role.getEmployees().contains(employee)){
-                        role.getEmployees().remove(employee);
-                    }
+            if (role.getEmployees().contains(employee)) {
+                role.getEmployees().remove(employee);
+            }
 
         }
         employee.getRoles().removeAll(roles);
@@ -86,87 +87,95 @@ public class EmployeeService {
     }
 
     @Transactional
-    public Employee save(Employee employee){
-       return employeeRepository.save(employee);
+    public Employee save(Employee employee) {
+        if (!employee.getRoles().isEmpty()) {
+            return saveWithRoles(employee);
+        }
+        return employeeRepository.save(employee);
     }
+
     @Transactional
-    public Employee saveWithRoles(Employee employee) {
+    private Employee saveWithRoles(Employee employee) {
         List<Role> roles = employee.getRoles();
-        for(Role role : roles ){
+        for (Role role : roles) {
             Role existingRole = roleService.findByTitle(role.getTitle());
-            if ( existingRole == null){
+            if (existingRole == null) {
                 throw new EntityNotFoundException("Role does no exist!");
             }
             role.setId(existingRole.getId());
         }
         employee.setRoles(roles);
-        return save(employee);
+        return employeeRepository.save(employee);
     }
 
     @Transactional
-    public List<Employee> saveAll(List<Employee> employees){
+    public List<Employee> saveAll(List<Employee> employees) {
         return employeeRepository.save(employees);
     }
 
     @Transactional
-    public Employee update(String username , Employee employee){
-        Employee employeeBeforeUpdate = findByUsername(username);//employeeRepository.findByUuid(uuid); ???? question 1: --->this is better
-        checkFieldsBeforeUpdate(employeeBeforeUpdate,employee);
+    public Employee update(String username, Employee employee) throws EntityNotFoundException{
+        //Employee employeeBeforeUpdate = findByUsername(username);
+        Employee employeeBeforeUpdate = employeeRepository.findByUsername(username);
+        if(employeeBeforeUpdate == null){
+            throw new EntityNotFoundException("Username does not exist!");
+        }
+        checkFieldsBeforeUpdate(employeeBeforeUpdate, employee);
         return save(employeeBeforeUpdate);
 
     }
 
-    private Employee  checkFieldsBeforeUpdate(Employee employeeBeforeUpdate, Employee employee) {
-
-        if(employee.getUsername() !=null){
+    private Employee checkFieldsBeforeUpdate(Employee employeeBeforeUpdate, Employee employee) {
+        if(!employee.getRoles().isEmpty()){
+            employeeBeforeUpdate.setRoles(employee.getRoles());
+        }
+        if (employee.getUsername() != null) {
             employeeBeforeUpdate.setUsername(employee.getUsername());
         }
-        if(employee.getAvatar()!=null){
+        if (employee.getAvatar() != null) {
             employeeBeforeUpdate.setAvatar(employee.getAvatar());
         }
-        if(employee.getEmail() !=null){
+        if (employee.getEmail() != null) {
             employeeBeforeUpdate.setEmail(employee.getEmail());
         }
-        if(employee.getFirstName()!=null){
+        if (employee.getFirstName() != null) {
             employeeBeforeUpdate.setUsername(employee.getUsername());
         }
-        if(employee.getGender()!=null){
+        if (employee.getGender() != null) {
             employeeBeforeUpdate.setGender(employee.getGender());
         }
-        if(employee.getLastName()!=null){
+        if (employee.getLastName() != null) {
             employeeBeforeUpdate.setLastName(employee.getLastName());
         }
-        if(employee.getPassword() !=null){
+        if (employee.getPassword() != null) {
             employeeBeforeUpdate.setPassword(employee.getPassword());
         }
-        if(employee.getPhone()!=null){
+        if (employee.getPhone() != null) {
             employeeBeforeUpdate.setPhone(employee.getPhone());
         }
-        if(employee.getUnit()!=null){
+        if (employee.getUnit() != null) {
             employeeBeforeUpdate.setUnit(employee.getUnit());
         }
-        if(employee.getRoles().size() != employeeBeforeUpdate.getRoles().size()){
-            employeeBeforeUpdate.setRoles(employee.getRoles());
-            saveWithRoles(employeeBeforeUpdate);
-        }else{
-            save(employeeBeforeUpdate);
-        }
-        return  employeeBeforeUpdate;
-    }
 
-    public Page<Employee> findByRole(String roleTitle) {
+    return employeeBeforeUpdate;
+}
+
+    public Page<Employee> findByRole(String roleTitle) throws EntityNotFoundException{
         Role role = roleService.findByTitle(roleTitle);
-        if(role == null){
+        if (role == null) {
             throw new EntityNotFoundException("Role does not exist!");
         }
         return new PageImpl<Employee>(role.getEmployees());
     }
 
-    public Employee findByUsername(String username) {
+    public Employee findByUsername(String username) throws  EntityNotFoundException{
         Employee employee = employeeRepository.findByUsername(username);
-        if(employee == null){
+        if (employee == null) {
             throw new EntityNotFoundException("Username does not exist!");
         }
         return employee;
     }
+
 }
+
+

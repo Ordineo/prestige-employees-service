@@ -17,6 +17,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Created by shbe on 20/04/2017.
  */
+/*
 @Component
 public class EmployeeResourceAssembler implements ResourceAssembler<Employee,Resource<Employee>>{
 
@@ -41,10 +42,10 @@ public class EmployeeResourceAssembler implements ResourceAssembler<Employee,Res
         Resource<Employee> employeeResource = new Resource<Employee>(employee);
 
         employeeResource.add(linkToSingleResource(employee));
-       /* for(Role role:employee.getRoles()){
+        for(Role role:employee.getRoles()){
             employeeResource.add(roleResourceAssembler.linkToSingleResource(role).withRel("roles"));
-        }*/
+        }
         return employeeResource;
     }
 
-}
+}*/
