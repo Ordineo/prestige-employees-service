@@ -445,7 +445,7 @@
 							<newName>${docker.registry}/${project.artifactId}</newName>
 							<imageName>${docker.registry}/${project.artifactId}</imageName>
 							<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-							<!--<dockerHost>http://${docker.registry}/v2/</dockerHost>-->
+							<dockerHost>http://${docker.registry}/</dockerHost>
 							<resources>
 								<resource>
 									<targetPath>/</targetPath>
