@@ -4,8 +4,6 @@ jdk:
 sudo: false
 install:
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-- mvn package
-after_deploy:
 - mvn clean test jacoco:report coveralls:report
 notifications:
   email:
