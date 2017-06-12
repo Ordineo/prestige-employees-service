@@ -3,19 +3,14 @@ package be.ordina.ordineo.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Type;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.*;
-
-/**
- * Created by shbe on 13/04/2017.
- */
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
@@ -49,10 +44,8 @@ public class Employee implements Identifiable<UUID> {
     private String avatar;
     @Column(name = "PHONE", length = 15)
     private String phone;
-
     @Enumerated(EnumType.STRING)
     private Unit unit;
-
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
