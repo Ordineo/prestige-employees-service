@@ -6,6 +6,7 @@ import be.ordina.ordineo.model.Gender;
 import be.ordina.ordineo.repository.EmployeeRepository;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,7 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {TestConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Profile("test")
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class EmployeeControllerTest {
     private MockMvc mockMvc;
 
@@ -71,6 +71,11 @@ public class EmployeeControllerTest {
                 .apply(documentationConfiguration(restDocumentation))
                 .alwaysDo(this.documentationHandler)
                 .build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        employeeRepository.delete(employeeRepository.findAll());
     }
 
     @Test
