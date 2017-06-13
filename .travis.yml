@@ -4,7 +4,10 @@ jdk:
 sudo: false
 install:
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-- mvn clean test jacoco:report coveralls:report
+script:
+- mvn test jacoco:report
+after_success:
+- mvn coveralls:report
 notifications:
   email:
     on_success: always
