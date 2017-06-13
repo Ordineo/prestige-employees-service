@@ -4,6 +4,8 @@ import be.ordina.ordineo.Specification.EmployeeSpecificationsBuilder;
 import be.ordina.ordineo.exception.EntityNotFoundException;
 import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.repository.EmployeeRepository;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,47 +58,12 @@ public class EmployeeService {
 
     @Transactional
     public Employee update(String username, Employee employee) {
-        Employee employeeBeforeUpdate = findByUsername(username);
-        checkFieldsBeforeUpdate(employeeBeforeUpdate, employee);
-        return save(employeeBeforeUpdate);
-    }
+        final Employee byUsername = findByUsername(username);
+        Hibernate.initialize(employee.getRoles());
+        employee.setUuid(byUsername.getUuid());
+        employee.setRoles(byUsername.getRoles());
 
-    private Employee checkFieldsBeforeUpdate(Employee employeeBeforeUpdate, Employee employee) {
-
-        if (employee.getUsername() != null) {
-            employeeBeforeUpdate.setUsername(employee.getUsername());
-        }
-        if (employee.getAvatar() != null) {
-            employeeBeforeUpdate.setAvatar(employee.getAvatar());
-        }
-        if (employee.getEmail() != null) {
-            employeeBeforeUpdate.setEmail(employee.getEmail());
-        }
-        if (employee.getFirstName() != null) {
-            employeeBeforeUpdate.setUsername(employee.getUsername());
-        }
-        if (employee.getGender() != null) {
-            employeeBeforeUpdate.setGender(employee.getGender());
-        }
-        if (employee.getLastName() != null) {
-            employeeBeforeUpdate.setLastName(employee.getLastName());
-        }
-        if (employee.getPassword() != null) {
-            employeeBeforeUpdate.setPassword(employee.getPassword());
-        }
-        if (employee.getPhone() != null) {
-            employeeBeforeUpdate.setPhone(employee.getPhone());
-        }
-        if (employee.getUnit() != null) {
-            employeeBeforeUpdate.setUnit(employee.getUnit());
-        }
-
-        if (employee.getRoles().size() != employeeBeforeUpdate.getRoles().size()) {
-            employeeBeforeUpdate.setRoles(employee.getRoles());
-        } else {
-            save(employeeBeforeUpdate);
-        }
-        return employeeBeforeUpdate;
+        return employeeRepository.save(employee);
     }
 
     public Employee findByUsername(String username) {

@@ -2,6 +2,7 @@ package be.ordina.ordineo.service;
 
 import be.ordina.ordineo.exception.EntityNotFoundException;
 import be.ordina.ordineo.model.Employee;
+import be.ordina.ordineo.model.Role;
 import be.ordina.ordineo.repository.EmployeeRepository;
 import be.ordina.ordineo.repository.RoleRepository;
 import org.junit.After;
@@ -13,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -98,5 +102,33 @@ public class EmployeeServiceTest {
 
         Mockito.verify(employeeRepository).save(captor.capture());
         assertThat(captor.getValue(), is(equalTo(employee)));
+    }
+
+    @Test
+    public void shouldUpdateEmployee() throws Exception {
+        final ArgumentCaptor<Employee> captor = ArgumentCaptor.forClass(Employee.class);
+
+        final Employee employee = new Employee();
+        employee.setEnabled(1);
+        employee.setUsername("johndoe");
+        employee.setRoles(Collections.singletonList(new Role("admin")));
+
+        final Employee updateEmployee = new Employee();
+        updateEmployee.setFirstName("John");
+        updateEmployee.setLastName("Doe");
+        updateEmployee.setEnabled(1);
+        updateEmployee.setUsername("johndoe");
+        Mockito.when(employeeRepository.findByUsername("johndoe")).thenReturn(employee);
+        Mockito.when(employeeRepository.save(captor.capture())).thenReturn(null);
+
+        service.update("johndoe", updateEmployee);
+
+        assertThat(captor.getValue().getRoles().get(0).getTitle(), is(equalTo("admin")));
+        assertThat(captor.getValue().getFirstName(), is(equalTo("John")));
+        assertThat(captor.getValue().getLastName(), is(equalTo("Doe")));
+        assertThat(captor.getValue().getUuid(), is(equalTo(employee.getUuid())));
+
+        Mockito.verify(employeeRepository).findByUsername("johndoe");
+        Mockito.verify(employeeRepository).save(captor.capture());
     }
 }
