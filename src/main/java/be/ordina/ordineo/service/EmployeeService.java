@@ -40,7 +40,7 @@ public class EmployeeService {
         if(filter.isPresent()){
             EmployeeSpecificationsBuilder employeeSpecificationsBuilder = new EmployeeSpecificationsBuilder();
             Pattern pattern = Pattern.compile("(\\w+?)(:)(\\w+?),");
-            Matcher matcher = pattern.matcher(filter + ",");
+            Matcher matcher = pattern.matcher(filter.get() + ",");
             while (matcher.find()) {
                 employeeSpecificationsBuilder.with(matcher.group(1), matcher.group(2), matcher.group(3));
             }
@@ -61,14 +61,10 @@ public class EmployeeService {
 
     @Transactional
     public void delete(String username){
-        Employee employee = findByUsername(username);
-       /* if(employee == null) {
-            throw new EntityNotFoundException("Employee does not exist!");
-        }*/
-        if(!employee.getRoles().isEmpty()){
-            unlinkRole(employee);
-        }
-        employeeRepository.delete(employee.getUuid());
+        final Employee employee = findByUsername(username);
+        employee.setEnabled(0);
+        employee.setDeleted(1);
+        employeeRepository.save(employee);
     }
 
     @Transactional

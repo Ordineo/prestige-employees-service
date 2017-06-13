@@ -22,12 +22,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @Component
 public class RoleResourceAssembler implements ResourceAssembler<Role, Resource<Role>> {
-    private EmployeeResourceAssembler employeeResourceAssembler;
+//    private EmployeeResourceAssembler employeeResourceAssembler;
     private EntityLinks entityLinks;
 
     @Autowired
-    public RoleResourceAssembler(EmployeeResourceAssembler employeeResourceAssembler, EntityLinks entityLinks) {
-        this.employeeResourceAssembler = employeeResourceAssembler;
+    public RoleResourceAssembler(EntityLinks entityLinks) {
+//        this.employeeResourceAssembler = employeeResourceAssembler;
         this.entityLinks = entityLinks;
     }
 
@@ -46,9 +46,9 @@ public class RoleResourceAssembler implements ResourceAssembler<Role, Resource<R
         roleResource.add(linkToSingleResource(role));
         // roleResource.add((linkTo(RoleController.class).slash(role)).withSelfRel());
         //  Link employeesLink = linkTo(methodOn(EmployeeController.class).findByRole(role.getTitle())).withRel("employees");
-        for (Employee employee : role.getEmployees()) {
-            roleResource.add(employeeResourceAssembler.linkToSingleResource(employee).withRel("employees"));
-        }
+//        for (Employee employee : role.getEmployees()) {
+//            roleResource.add(employeeResourceAssembler.linkToSingleResource(employee).withRel("employees"));
+//        }
 
 
         return roleResource;

@@ -1,8 +1,6 @@
 package be.ordina.ordineo.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.Identifiable;
 
@@ -16,9 +14,12 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@EqualsAndHashCode(exclude = {"roles"})
+@ToString(exclude = {"roles"})
 @Table(name = "EMPLOYEES", uniqueConstraints = {
         @UniqueConstraint(columnNames = "USERNAME"),
-        @UniqueConstraint(columnNames = "EMAIL")})
+        @UniqueConstraint(columnNames = "EMAIL")
+})
 public class Employee implements Identifiable<UUID> {
 
     @Id
@@ -62,18 +63,13 @@ public class Employee implements Identifiable<UUID> {
     @Column(name = "DELETED", columnDefinition = "Integer default '0' NOT NULL")
     private int deleted;
 
-    @Override
-    public UUID getId() {
-        return uuid;
-    }
-
     public Employee(String username) {
         this.uuid = UUID.randomUUID();
         this.username = username;
-        this.enabled = 0;
+        this.enabled = 1;
     }
 
-    public Employee(String username, String password, String email, String firstName, String lastName, String avatar, String phone, String unit, String gender, List<Role> roles) {
+    public Employee(String username, String password, String email, String firstName, String lastName, String avatar, String phone, Unit unit, Gender gender, List<Role> roles) {
         this.uuid = UUID.randomUUID();
         this.username = username;
         this.password = password;
@@ -82,45 +78,21 @@ public class Employee implements Identifiable<UUID> {
         this.lastName = lastName;
         this.avatar = avatar;
         this.phone = phone;
-//        this.unit = unit;
-//        this.gender = gender;
+        this.gender = gender;
+        this.unit = unit;
         this.roles = roles;
         this.enabled = 1;
     }
 
-    /*
-     The method annotated with @PrePersist in listener bean
-     class is called before persisting data by entity manager persist() method.
-     */
     @PrePersist
     public void generateUuid() {
-
-        System.out.println("inside employee");
         if (getUuid() == null) {
-            System.out.println("inside employee object null");
             setUuid(UUID.randomUUID());
         }
     }
 
     @Override
-    public String toString() {
-        return "Employee{" +
-                "uuid=" + uuid +
-                ", githubId=" + githubId +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", phone='" + phone + '\'' +
-                ", unit=" + unit +
-                ", gender=" + gender +
-                ", roles=" + roles +
-                ", enabled=" + enabled +
-                ", deleted=" + deleted +
-                '}';
+    public UUID getId() {
+        return uuid;
     }
 }
-
-
-
