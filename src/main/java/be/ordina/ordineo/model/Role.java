@@ -1,8 +1,6 @@
 package be.ordina.ordineo.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
@@ -12,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString(exclude = {"employees"})
+@EqualsAndHashCode(exclude = {"employees"})
 @Entity
 @Table(name = "ROLES", uniqueConstraints = {
         @UniqueConstraint(columnNames = "ID"),
@@ -32,11 +32,4 @@ public class Role implements Identifiable<Long> {
         this.title = title;
     }
 
-    @Override
-    public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                '}';
-    }
 }

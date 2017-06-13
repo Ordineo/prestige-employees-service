@@ -2,6 +2,7 @@ package be.ordina.ordineo.controller;
 
 import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.model.Gender;
+import be.ordina.ordineo.model.Role;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,13 +24,12 @@ import static org.junit.Assert.*;
  * @since 2017
  */
 @RunWith(MockitoJUnitRunner.class)
-public class EmployeeResourceAssemblerTest {
-
+public class RoleResourceAssemblerTest {
     @Mock
     private EntityLinks entityLinks;
 
     @InjectMocks
-    private EmployeeResourceAssembler assembler;
+    private RoleResourceAssembler assembler;
 
     @Before
     public void setUp() throws Exception {
@@ -43,23 +43,19 @@ public class EmployeeResourceAssemblerTest {
 
     @Test
     public void shouldAssembleEmployeeWhenEmployeeIsGiven() throws Exception {
-        final Employee entity = new Employee();
-        entity.setUsername("johndoe");
-        entity.setFirstName("John");
-        entity.setLastName("Doe");
-        entity.setEnabled(1);
-        entity.setGender(Gender.MALE);
+        final Role entity = new Role();
+        entity.setTitle("admin");
 
-        final Link self = new Link("http://localhost:8080/employees/johndoe");
-        final Link employee = new Link("http://localhost:8080/employees/johndoe", "employee");
-        Mockito.when(entityLinks.linkToSingleResource(Employee.class, entity.getUsername())).thenReturn(self, employee);
+        final Link self = new Link("http://localhost:8080/roles/admin");
+        final Link employee = new Link("http://localhost:8080/roles/admin", "role");
+        Mockito.when(entityLinks.linkToSingleResource(Role.class, entity.getTitle())).thenReturn(self, employee);
 
-        final Resource<Employee> resource = assembler.toResource(entity);
+        final Resource<Role> resource = assembler.toResource(entity);
         assertThat(resource.getContent(), equalTo(entity));
         assertThat(resource.getLinks(), hasSize(2));
         assertThat(resource.getLink("self"), equalTo(self));
-        assertThat(resource.getLink("employee"), equalTo(employee));
+        assertThat(resource.getLink("role"), equalTo(employee));
 
-        Mockito.verify(entityLinks, Mockito.times(2)).linkToSingleResource(Employee.class, entity.getUsername());
+        Mockito.verify(entityLinks, Mockito.times(2)).linkToSingleResource(Role.class, entity.getTitle());
     }
 }

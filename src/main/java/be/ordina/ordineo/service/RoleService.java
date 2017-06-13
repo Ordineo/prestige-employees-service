@@ -7,6 +7,7 @@ import be.ordina.ordineo.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,6 +51,10 @@ public class RoleService {
 
     public Page<Role> findAll() {
         return new PageImpl<Role>(roleRepository.findAll());
+    }
+
+    public Page<Role> findAll(Pageable pageable) {
+        return roleRepository.findAll(pageable);
     }
 
     @Transactional//definately ask this transactionl shouldn't be from spring frame work???? instead of javax
