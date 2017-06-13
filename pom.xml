@@ -366,7 +366,6 @@
 						<org.springframework.restdocs.outputDir>${project.build.directory}/generated-snippets
 						</org.springframework.restdocs.outputDir>
 					</systemPropertyVariables>
-					<argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
