@@ -56,9 +56,9 @@ public class RoleService {
     public void delete(String title) {
         Role role = findByTitle(title);
 
-        if (!role.getEmployees().isEmpty()) {
-            unlinkEmployee(role);
-        }
+//        if (!role.getEmployees().isEmpty()) {
+//            unlinkEmployee(role);
+//        }
         roleRepository.delete(role.getId());
     }
 
@@ -71,7 +71,7 @@ public class RoleService {
             }
         }
         role.getEmployees().removeAll(employees);
-        employeeService.saveAll(employees);
+//        employeeService.saveAll(employees);
     }
 
 }

@@ -37,9 +37,7 @@ import static org.junit.Assert.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -102,14 +100,14 @@ public class EmployeeControllerTest {
 
     @Test
     public void findAllEmployeesWithPaging() throws Exception {
-        for (int i = 0; i < 60; ++i) {
+        for (int i = 0; i < 5; ++i) {
             createSamplePerson(String.format("test%02d", i));
         }
 
-        mockMvc.perform(get("/employees?page=1&size=20").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/employees?page=1&size=2").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded").exists())
-                .andExpect(jsonPath("$._embedded.employees", hasSize(20)))
+                .andExpect(jsonPath("$._embedded.employees", hasSize(2)))
                 .andExpect(jsonPath("$._links").exists())
                 .andExpect(jsonPath("$._links.self").exists())
                 .andExpect(jsonPath("$._links.first").exists())
@@ -117,7 +115,7 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$._links.next").exists())
                 .andExpect(jsonPath("$._links.last").exists())
                 .andExpect(jsonPath("$.page").exists())
-                .andExpect(jsonPath("$.page.totalElements", is(60)));
+                .andExpect(jsonPath("$.page.totalElements", is(5)));
     }
 
     @Test
@@ -138,27 +136,26 @@ public class EmployeeControllerTest {
 
     @Test
     public void findAllEmployeesWithSearchCriteriaAndPaging() throws Exception {
-        for (int i = 0; i < 60; ++i) {
+        for (int i = 0; i < 5; ++i) {
             createSamplePerson(String.format("George%02d", i));
         }
-        for (int i = 0; i < 60; ++i) {
+        for (int i = 0; i < 2; ++i) {
             createSamplePerson(String.format("Mary%02d", i));
         }
 
-        mockMvc.perform(get("/employees?search=username:g&page=1&size=20").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/employees?search=username:g&page=1&size=2").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded").exists())
-                .andExpect(jsonPath("$._embedded.employees", hasSize(20)))
+                .andExpect(jsonPath("$._embedded.employees", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.employees[0].username", containsString("george")))
                 .andExpect(jsonPath("$._embedded.employees[0].firstName", containsString("George")))
                 .andExpect(jsonPath("$._links").exists())
                 .andExpect(jsonPath("$._links.self").exists())
                 .andExpect(jsonPath("$._links.first").exists())
-                .andExpect(jsonPath("$._links.prev").exists())
                 .andExpect(jsonPath("$._links.next").exists())
                 .andExpect(jsonPath("$._links.last").exists())
                 .andExpect(jsonPath("$.page").exists())
-                .andExpect(jsonPath("$.page.totalElements", is(60)));
+                .andExpect(jsonPath("$.page.totalElements", is(5)));
     }
 
     @Test

@@ -2,12 +2,12 @@ language: java
 jdk:
 - oraclejdk8
 sudo: false
-before_install:
-- echo "MAVEN_OPTS='-Xmx2048m -XX:MaxPermSize=512m'" > ~/.mavenrc
 install:
 - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script:
-- mvn test jacoco:report coveralls:report
+- mvn clean test jacoco:report
+after_script:
+- mvn coveralls:report
 notifications:
   email:
     on_success: change

@@ -1,15 +1,21 @@
 package be.ordina.ordineo.service;
 
+import be.ordina.ordineo.exception.EntityNotFoundException;
+import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.repository.EmployeeRepository;
+import be.ordina.ordineo.repository.RoleRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
@@ -22,9 +28,6 @@ public class EmployeeServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
-    @Mock
-    private RoleService roleService;
-
     @InjectMocks
     private EmployeeService service;
 
@@ -36,13 +39,64 @@ public class EmployeeServiceTest {
     @After
     public void tearDown() throws Exception {
         Mockito.verifyNoMoreInteractions(
-                employeeRepository,
-                roleService
+                employeeRepository
         );
     }
 
     @Test
-    public void name() throws Exception {
-        assertTrue(true);
+    public void shouldSoftDeleteEmployeeWhenExecutingDelete() throws Exception {
+        final ArgumentCaptor<Employee> captor = ArgumentCaptor.forClass(Employee.class);
+
+        final Employee employee = new Employee();
+        employee.setEnabled(1);
+        employee.setUsername("johndoe");
+
+        Mockito.when(employeeRepository.findByUsername("johndoe")).thenReturn(employee);
+        Mockito.when(employeeRepository.save(captor.capture())).thenReturn(null);
+
+        service.delete("johndoe");
+
+        assertThat(captor.getValue().getDeleted(), is(equalTo(1)));
+
+        Mockito.verify(employeeRepository).findByUsername("johndoe");
+        Mockito.verify(employeeRepository).save(captor.getValue());
+    }
+
+    @Test
+    public void shouldFailWhenEmployeeNotFound() throws Exception {
+        try {
+            service.findByUsername("johndoe");
+            fail();
+        } catch (final EntityNotFoundException enfEx) {
+            assertThat(enfEx.getMessage(), is(equalTo("Username does not exists!")));
+        }
+        Mockito.verify(employeeRepository).findByUsername("johndoe");
+    }
+
+    @Test
+    public void shouldReturnEmployeeWhenFound() throws Exception {
+        final Employee employee = new Employee();
+        employee.setEnabled(1);
+        employee.setUsername("johndoe");
+
+        Mockito.when(employeeRepository.findByUsername("johndoe")).thenReturn(employee);
+
+        service.findByUsername("johndoe");
+
+        Mockito.verify(employeeRepository).findByUsername("johndoe");
+    }
+
+    @Test
+    public void shouldSaveEmployee() throws Exception {
+        final ArgumentCaptor<Employee> captor = ArgumentCaptor.forClass(Employee.class);
+
+        final Employee employee = new Employee();
+        employee.setEnabled(1);
+        employee.setUsername("johndoe");
+
+        service.save(employee);
+
+        Mockito.verify(employeeRepository).save(captor.capture());
+        assertThat(captor.getValue(), is(equalTo(employee)));
     }
 }
