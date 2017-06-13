@@ -38,7 +38,7 @@ public class EmployeeController {
         this.employeeResourceAssembler = employeeResourceAssembler;
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @GetMapping("")
     public HttpEntity<PagedResources<Resource<Employee>>> findAll(
             @RequestParam(value = "search", required = false) String search,
             Pageable pageable, PagedResourcesAssembler<Employee> assembler) {
@@ -51,19 +51,19 @@ public class EmployeeController {
         return new ResponseEntity<>(pagedEmployeeResource, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    @GetMapping("/{username}")
     public ResponseEntity findByUsername(@PathVariable("username") String username) {
         Employee employee = employeeService.findByUsername(username);
         return new ResponseEntity<>(employeeResourceAssembler.toResource(employee), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
+    @DeleteMapping("/{username}")
     public ResponseEntity delete(@PathVariable("username") String username) {
         employeeService.delete(username);
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.PUT, consumes = {"application/hal+json", "application/json"})
+    @PutMapping("/{username}")
     public ResponseEntity update(@PathVariable("username") String username, @RequestBody @Valid Employee employee, HttpServletRequest request)
             throws URISyntaxException {
         Employee updatedEmployee = employeeService.update(username, employee);

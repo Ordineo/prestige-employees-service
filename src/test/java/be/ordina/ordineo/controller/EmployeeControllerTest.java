@@ -4,8 +4,7 @@ import be.ordina.ordineo.TestConfig;
 import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.model.Gender;
 import be.ordina.ordineo.repository.EmployeeRepository;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import be.ordina.ordineo.util.TestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,14 +21,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -61,15 +57,13 @@ public class EmployeeControllerTest {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    private RestDocumentationResultHandler documentationHandler;
-
     @Before
     public void setUp() throws Exception {
-        documentationHandler = document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()));
+        RestDocumentationResultHandler documentationHandler = document("{method-name}", preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()));
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
-                .alwaysDo(this.documentationHandler)
+                .alwaysDo(documentationHandler)
                 .build();
     }
 
@@ -184,7 +178,7 @@ public class EmployeeControllerTest {
         assertThat(byUsername, not(equalTo(george))); // Validate that the update in the database not has been performed
 
         mockMvc.perform(put("/employees/george")
-                .content(convertObjectToJsonBytes(george))
+                .content(TestUtil.convertObjectToJsonBytes(george))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNoContent());
 
@@ -219,11 +213,5 @@ public class EmployeeControllerTest {
 
     private int getPort() {
         return (((AnnotationConfigEmbeddedWebApplicationContext) webApplicationContext).getEmbeddedServletContainer()).getPort();
-    }
-
-    public byte[] convertObjectToJsonBytes(Object object) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper.writeValueAsBytes(object);
     }
 }

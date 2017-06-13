@@ -3,8 +3,9 @@ package be.ordina.ordineo.service;
 import be.ordina.ordineo.Specification.EmployeeSpecificationsBuilder;
 import be.ordina.ordineo.exception.EntityNotFoundException;
 import be.ordina.ordineo.model.Employee;
+import be.ordina.ordineo.model.Role;
 import be.ordina.ordineo.repository.EmployeeRepository;
-import org.apache.commons.lang3.StringUtils;
+import be.ordina.ordineo.repository.RoleRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,10 +24,12 @@ import java.util.regex.Pattern;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, RoleRepository roleRepository) {
         this.employeeRepository = employeeRepository;
+        this.roleRepository = roleRepository;
     }
 
     public Page<Employee> findAll(Optional<String> filter, Pageable pageable) {
@@ -72,5 +76,15 @@ public class EmployeeService {
             throw new EntityNotFoundException("Username does not exists!");
         }
         return employee;
+    }
+
+    @Transactional
+    public void initializeEmployee(String username, String password) {
+        final Role admin = roleRepository.findByTitle("admin");
+        final Employee employee = findByUsername(username);
+        employee.setEnabled(1);
+        employee.setPassword(password);
+        employee.setRoles(new ArrayList<>(Collections.singletonList(admin)));
+        employeeRepository.save(employee);
     }
 }
