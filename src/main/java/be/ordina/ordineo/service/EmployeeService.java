@@ -6,6 +6,7 @@ import be.ordina.ordineo.model.Employee;
 import be.ordina.ordineo.model.Role;
 import be.ordina.ordineo.repository.EmployeeRepository;
 import be.ordina.ordineo.repository.RoleRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -80,11 +81,10 @@ public class EmployeeService {
 
     @Transactional
     public void initializeEmployee(String username, String password) {
-        final Role admin = roleRepository.findByTitle("admin");
-        final Employee employee = findByUsername(username);
+        Role admin = roleRepository.findByTitle("admin");
+        Employee employee = findByUsername(username);
         employee.setEnabled(1);
         employee.setPassword(password);
         employee.setRoles(new ArrayList<>(Collections.singletonList(admin)));
-        employeeRepository.save(employee);
     }
 }

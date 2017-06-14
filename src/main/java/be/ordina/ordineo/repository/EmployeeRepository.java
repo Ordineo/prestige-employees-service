@@ -2,6 +2,7 @@ package be.ordina.ordineo.repository;
 
 import be.ordina.ordineo.model.Employee;
 //import be.ordina.ordineo.model.projection.EmployeeView;
+import be.ordina.ordineo.model.projection.EmployeeView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,10 +14,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 import java.util.UUID;
 
-/**
- * Created by shbe on 13/04/2017.
- */
-@RepositoryRestResource//(excerptProjection = EmployeeView.class)
+@RepositoryRestResource(excerptProjection = EmployeeView.class)
 public interface EmployeeRepository extends JpaRepository<Employee, UUID> ,JpaSpecificationExecutor<Employee>{
 
   //@RestResource(path="employee",rel="employee")

@@ -91,12 +91,69 @@ public class RegisterControllerTest {
 
         mockMvc.perform(post("/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtil.convertObjectToJsonBytes(new Register("johndoe", "password")))
+                .content(TestUtil.convertObjectToJsonBytes(new Register("johndoe", "password", "password")))
         ).andExpect(status().isNoContent());
 
         final Employee employee = employeeRepository.findByUsername("johndoe");
         assertThat(employee.getEnabled(), is(equalTo(1)));
         assertThat(employee.getPassword(), is(notNullValue()));
+    }
+
+    @Test
+    public void shouldReturnWithBadRequestWhenPasswordAndConfirmPassword() throws Exception {
+        final Employee entity = new Employee();
+        entity.setUsername("johndoe");
+        entity.setEnabled(0);
+        entity.setFirstName("John");
+        entity.setLastName("Doe");
+        employeeRepository.save(entity);
+
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(new Register("johndoe", "password", "")))
+        ).andExpect(status().isBadRequest());
+
+        final Employee employee = employeeRepository.findByUsername("johndoe");
+        assertThat(employee.getEnabled(), is(equalTo(0)));
+        assertThat(employee.getPassword(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldReturnWithBadRequestWhenAccountIsEnabled() throws Exception {
+        final Employee entity = new Employee();
+        entity.setUsername("johndoe");
+        entity.setEnabled(1);
+        entity.setFirstName("John");
+        entity.setLastName("Doe");
+        employeeRepository.save(entity);
+
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(new Register("johndoe", "password", "password")))
+        ).andExpect(status().isBadRequest());
+
+        final Employee employee = employeeRepository.findByUsername("johndoe");
+        assertThat(employee.getEnabled(), is(equalTo(1)));
+    }
+
+    @Test
+    public void shouldReturnWithBadRequestWhenAccountHasPassword() throws Exception {
+        final Employee entity = new Employee();
+        entity.setUsername("johndoe");
+        entity.setEnabled(0);
+        entity.setPassword("ABC");
+        entity.setFirstName("John");
+        entity.setLastName("Doe");
+        employeeRepository.save(entity);
+
+        mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(new Register("johndoe", "password", "password")))
+        ).andExpect(status().isBadRequest());
+
+        final Employee employee = employeeRepository.findByUsername("johndoe");
+        assertThat(employee.getEnabled(), is(equalTo(0)));
+        assertThat(employee.getPassword(), is(equalTo("ABC")));
     }
 
     // Utils

@@ -104,6 +104,9 @@ public class EmployeeControllerTest {
         }
 
         mockMvc.perform(get("/employees?page=1&size=2").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(result -> {
+                    System.out.println(result);
+                })
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded").exists())
                 .andExpect(jsonPath("$._embedded.employees", hasSize(2)))
